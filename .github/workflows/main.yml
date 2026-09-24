@@ -1,4 +1,4 @@
-name: Build Windows Executables
+name: Build unpac.exe for Windows
 
 on:
   workflow_dispatch:
@@ -18,27 +18,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y mingw-w64
 
-      - name: Compile unpac.exe and spd_dump.exe for Windows
+      - name: Compile unpac.exe
         run: |
-          # If your files are in a specific subfolder, navigate to it first (change 'unpac' if needed)
-          # Or compile pointing directly to the path if they are split.
-          
-          # Compiling unpac.exe (assuming unpac.c is in the root or navigating to its folder)
-          # If unpac.c is inside an 'unpac' folder:
           cd unpac || true
-          
           x86_64-w64-mingw32-gcc -O2 -Wall -Wextra -std=c99 -pedantic -Wno-unused unpac.c -o unpac.exe
-          
-          # Move back or compile spd_dump if it's in the root or another path
-          cd ..
-          
-          # Compiling spd_dump.exe (adjust path if it's in a subfolder)
-          x86_64-w64-mingw32-gcc -O2 -Wall -Wextra -std=c99 -pedantic -Wno-unused spd_dump.c -o spd_dump.exe
 
-      - name: Upload Windows Executables Artifact
+      - name: Upload Windows Executable Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: windows-binaries
+          name: unpac-windows-binary
           path: |
             **/unpac.exe
-            **/spd_dump.exe
