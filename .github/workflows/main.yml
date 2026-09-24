@@ -1,0 +1,37 @@
+name: Build Windows Executables
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-windows:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install MinGW Cross-Compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mingw-w64
+
+      - name: Compile unpac.exe and spd_dump.exe
+        run: |
+          # Compile unpac for Windows (64-bit)
+          x86_64-w64-mingw32-gcc -O2 -Wall -Wextra -std=c99 -pedantic -Wno-unused unpac.c -o unpac.exe
+
+          # Compile spd_dump for Windows (64-bit)
+          # Note: If libusb is required, ensure dependencies or static flags are handled, 
+          # otherwise standard serial support compiles cleanly with MinGW.
+          x86_64-w64-mingw32-gcc -O2 -Wall -Wextra -std=c99 -pedantic -Wno-unused spd_dump.c -o spd_dump.exe
+
+      - name: Upload Windows Executables Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-binaries
+          path: |
+            unpac.exe
+            spd_dump.exe
